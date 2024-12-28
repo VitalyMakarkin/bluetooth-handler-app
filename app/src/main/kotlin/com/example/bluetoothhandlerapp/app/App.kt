@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp
+package com.example.bluetoothhandlerapp.app
 
 import android.app.Application
 
