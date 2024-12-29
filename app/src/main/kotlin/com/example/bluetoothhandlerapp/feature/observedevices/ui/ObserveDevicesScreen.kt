@@ -14,7 +14,7 @@ fun ObserveDevicesScreen(viewModel: ObserveDevicesViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     Column {
         Text("Observe Devices Screen")
-        Text("Devices: ${uiState.devices.joinToString(separator = ", ") { it.name }}")
+        Text("Devices: ${uiState.scannedDevices.joinToString(separator = ", ") { it.name }}")
     }
 }
 
