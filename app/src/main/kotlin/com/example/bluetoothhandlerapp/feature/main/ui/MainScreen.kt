@@ -3,7 +3,7 @@ package com.example.bluetoothhandlerapp.feature.main.ui
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.bluetoothhandlerapp.core.ui.theme.BHTheme
+import com.example.bluetoothhandlerapp.core.ui.theme.AppTheme
 
 @Composable
 fun MainScreen() {
@@ -13,7 +13,7 @@ fun MainScreen() {
 @Preview
 @Composable
 fun MainScreenPreview() {
-    BHTheme {
+    AppTheme {
         MainScreen()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.observedevices.ui
+package com.example.bluetoothhandlerapp.feature.devicesearch.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,16 +16,16 @@ import kotlinx.datetime.minus
 import javax.inject.Inject
 
 @HiltViewModel
-class ObserveDevicesViewModel @Inject constructor(
+class DeviceSearchViewModel @Inject constructor(
     private val repository: ScannedDevicesRepository,
 ) : ViewModel() {
 
-    val uiState: StateFlow<ObserveDevicesUiState> = repository.observeAll(
+    val uiState: StateFlow<DeviceSearchUiState> = repository.observeAll(
         maxLastScannedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND),
         maxSignalLevel = 6,
     )
         .map { devices ->
-            ObserveDevicesUiState(
+            DeviceSearchUiState(
                 scannedDevices = devices,
                 isLoading = false,
             )
@@ -33,7 +33,7 @@ class ObserveDevicesViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = ObserveDevicesUiState(isLoading = true)
+            initialValue = DeviceSearchUiState(isLoading = true)
         )
 
     init {

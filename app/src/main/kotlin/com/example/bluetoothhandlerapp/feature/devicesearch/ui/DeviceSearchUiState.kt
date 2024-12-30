@@ -1,8 +1,8 @@
-package com.example.bluetoothhandlerapp.feature.observedevices.ui
+package com.example.bluetoothhandlerapp.feature.devicesearch.ui
 
 import com.example.bluetoothhandlerapp.core.model.ScannedDevice
 
-data class ObserveDevicesUiState(
+data class DeviceSearchUiState(
     val scannedDevices: List<ScannedDevice> = emptyList(),
     val isLoading: Boolean = false,
 )

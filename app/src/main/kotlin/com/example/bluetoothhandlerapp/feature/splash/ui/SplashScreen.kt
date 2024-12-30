@@ -3,7 +3,7 @@ package com.example.bluetoothhandlerapp.feature.splash.ui
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.bluetoothhandlerapp.core.ui.theme.BHTheme
+import com.example.bluetoothhandlerapp.core.ui.theme.AppTheme
 
 @Composable
 fun SplashScreen() {
@@ -13,7 +13,7 @@ fun SplashScreen() {
 @Preview
 @Composable
 fun SplashScreenPreview() {
-    BHTheme {
+    AppTheme {
         SplashScreen()
     }
 }
