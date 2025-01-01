@@ -3,6 +3,7 @@ package com.example.bluetoothhandlerapp.feature.devicesearch.ui
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,11 +15,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bluetoothhandlerapp.core.ui.theme.AppTheme
 
 @Composable
-fun DeviceSearchScreen(viewModel: DeviceSearchViewModel = viewModel()) {
+fun DeviceSearchScreen(viewModel: DeviceSearchViewModel = viewModel(), onClick: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             Text("Device Search Screen")
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onClick) {
+                Text("SCAN")
+            }
         }
     ) { paddingValues ->
         LazyColumn(
@@ -35,6 +41,6 @@ fun DeviceSearchScreen(viewModel: DeviceSearchViewModel = viewModel()) {
 @Composable
 fun DeviceSearchScreenPreview() {
     AppTheme {
-        DeviceSearchScreen()
+        DeviceSearchScreen(onClick = {})
     }
 }
