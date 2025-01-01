@@ -8,12 +8,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import com.example.bluetoothhandlerapp.app.bluetooth.BluetoothLeHandler
 import com.example.bluetoothhandlerapp.core.ui.theme.AppTheme
 import com.example.bluetoothhandlerapp.feature.devicesearch.ui.DeviceSearchScreen
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var bleHandler: BluetoothLeHandler
 
     private val bluetoothRequestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -31,7 +36,6 @@ class MainActivity : ComponentActivity() {
         } else {
             arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
-
         return requiredPermissions
             .filter { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }
             .toTypedArray()
@@ -42,7 +46,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                DeviceSearchScreen()
+                DeviceSearchScreen(
+                    onClick = {
+                        // Don't do that
+                        if (!bleHandler.getIsScanned()) bleHandler.startScan() else bleHandler.stopScan()
+                    }
+                )
             }
         }
     }
