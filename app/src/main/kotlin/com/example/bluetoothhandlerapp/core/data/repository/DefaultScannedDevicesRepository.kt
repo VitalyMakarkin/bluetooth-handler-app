@@ -10,12 +10,12 @@ class DefaultScannedDevicesRepository @Inject constructor(
     private val scannedDevicesDataSource: ScannedDevicesDataSource,
 ): ScannedDevicesRepository {
 
-    override fun observeAll(maxLastScannedAt: Instant, maxSignalLevel: Int): Flow<List<ScannedDevice>> {
-        return scannedDevicesDataSource.observeAll(maxLastScannedAt, maxSignalLevel)
+    override fun observeAll(maxLastScannedAt: Instant): Flow<List<ScannedDevice>> {
+        return scannedDevicesDataSource.observeAll(maxLastScannedAt)
     }
 
-    override suspend fun add(device: ScannedDevice) {
-        scannedDevicesDataSource.add(device)
+    override suspend fun addOrUpdate(device: ScannedDevice) {
+        scannedDevicesDataSource.addOrUpdate(device)
     }
 
     override suspend fun clearAll() {
