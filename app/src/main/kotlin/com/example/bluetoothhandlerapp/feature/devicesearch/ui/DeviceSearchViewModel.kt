@@ -19,8 +19,7 @@ class DeviceSearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<DeviceSearchUiState> = repository.observeAll(
-        maxLastScannedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND),
-        maxSignalLevel = 6,
+        maxLastScannedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND)
     )
         .map { devices ->
             DeviceSearchUiState(

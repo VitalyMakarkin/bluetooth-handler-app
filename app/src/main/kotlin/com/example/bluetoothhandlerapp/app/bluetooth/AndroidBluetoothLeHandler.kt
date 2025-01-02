@@ -7,6 +7,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesRepository
 import com.example.bluetoothhandlerapp.core.model.ScannedDevice
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,7 @@ class AndroidBluetoothLeHandler(
     private val bluetoothScanner = bluetoothAdapter.bluetoothLeScanner
     private var _isScanning = false
 
-    private val handler = Handler() // TODO: Handler(Looper.getMainLooper())
+    private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
@@ -39,13 +40,13 @@ class AndroidBluetoothLeHandler(
                     scannedAt = Clock.System.now(),
                     rssi = it.rssi,
                 )
-                scope.launch { scannedDevicesRepository.add(device) }
+                scope.launch { scannedDevicesRepository.addOrUpdate(device) }
             }
         }
     }
 
     companion object {
-        const val SCAN_PERIOD_IN_MILLIS: Long = 1000L
+        const val SCAN_PERIOD_IN_MILLIS: Long = 10_000L
     }
 
     override fun startScan() {
