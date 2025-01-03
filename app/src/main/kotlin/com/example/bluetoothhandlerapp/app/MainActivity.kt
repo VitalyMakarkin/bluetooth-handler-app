@@ -12,6 +12,7 @@ import com.example.bluetoothhandlerapp.app.bluetooth.BluetoothLeHandler
 import com.example.bluetoothhandlerapp.core.ui.theme.AppTheme
 import com.example.bluetoothhandlerapp.feature.devicesearch.ui.DeviceSearchScreen
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.aakira.napier.Napier
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
     private val bluetoothRequestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             if (!permissions.all { it.value }) {
-                // TODO: Notify user about not given all required permissions
+                Napier.d { "Not given all required permissions: $permissions" }
             }
         }
 
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppTheme {
+            AppTheme(darkTheme = false) {
                 DeviceSearchScreen(
                     onClick = {
                         // Don't do that

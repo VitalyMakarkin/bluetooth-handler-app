@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesRepository
 import com.example.bluetoothhandlerapp.core.model.ScannedDevice
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,14 +34,16 @@ class AndroidBluetoothLeHandler(
     private val scanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             super.onScanResult(callbackType, result)
-            result.let {
-                val device = ScannedDevice(
-                    address = it.device.address ?: "Unknown",
-                    name = it.device.name ?: "Unknown",
-                    scannedAt = Clock.System.now(),
-                    rssi = it.rssi,
-                )
-                scope.launch { scannedDevicesRepository.addOrUpdate(device) }
+            with(result) {
+                device.address?.let { address ->
+                    val device = ScannedDevice(
+                        address = address,
+                        name = device.name ?: "Unknown",
+                        scannedAt = Clock.System.now(),
+                        rssi = rssi,
+                    )
+                    scope.launch { scannedDevicesRepository.addOrUpdate(device) }
+                }
             }
         }
     }
@@ -55,17 +58,20 @@ class AndroidBluetoothLeHandler(
             {
                 _isScanning = false
                 bluetoothScanner.stopScan(scanCallback)
+                Napier.d { "Scanning stopped... [delayed, $SCAN_PERIOD_IN_MILLIS millis]" }
             },
             SCAN_PERIOD_IN_MILLIS,
         )
         _isScanning = true
         bluetoothScanner.startScan(scanCallback)
+        Napier.d { "Scanning started..." }
     }
 
     override fun stopScan() {
         if (!_isScanning) throw IllegalStateException("BLE devices are not scanning now!")
         _isScanning = false
         bluetoothScanner.stopScan(scanCallback)
+        Napier.d { "Scanning stopped..." }
     }
 
     override fun getIsScanned(): Boolean {
