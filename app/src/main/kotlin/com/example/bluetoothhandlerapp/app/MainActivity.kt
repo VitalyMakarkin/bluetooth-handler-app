@@ -48,9 +48,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme(darkTheme = false) {
                 DeviceSearchScreen(
-                    onClick = {
+                    onScanClick = {
                         // Don't do that
                         if (!bleHandler.getIsScanned()) bleHandler.startScan() else bleHandler.stopScan()
+                    },
+                    onDeviceClick = { address ->
+                        bleHandler.connect(address)
                     }
                 )
             }
