@@ -12,8 +12,8 @@ interface CachedDeviceDao {
     @Upsert
     fun upsert(entity: CachedDeviceEntity)
 
-    @Query("SELECT * FROM cached_devices WHERE localId = :localId")
-    fun observeByLocalId(localId: Int): Flow<CachedDeviceEntity>
+    @Query("SELECT * FROM cached_devices WHERE address = :address")
+    fun observeByAddress(address: String): Flow<CachedDeviceEntity>
 
     @Query("DELETE FROM cached_devices")
     fun clearTable()

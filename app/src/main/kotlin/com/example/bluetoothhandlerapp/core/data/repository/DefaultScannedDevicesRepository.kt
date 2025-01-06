@@ -16,6 +16,11 @@ class DefaultScannedDevicesRepository @Inject constructor(
         return scannedDevicesDataSource.observeAll(maxLastScannedAt)
     }
 
+    override suspend fun getByAddressOrNull(address: String): ScannedDevice? {
+        Napier.d { "getByAddress... address = $address" }
+        return scannedDevicesDataSource.getByAddressOrNull(address)
+    }
+
     override suspend fun addOrUpdate(device: ScannedDevice) {
         Napier.d { "addOrUpdate... device = $device" }
         scannedDevicesDataSource.addOrUpdate(device)

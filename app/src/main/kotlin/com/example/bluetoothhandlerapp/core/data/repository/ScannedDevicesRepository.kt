@@ -6,6 +6,7 @@ import kotlinx.datetime.Instant
 
 interface ScannedDevicesRepository {
     fun observeAll(maxLastScannedAt: Instant): Flow<List<ScannedDevice>>
+    suspend fun getByAddressOrNull(address: String): ScannedDevice?
     suspend fun addOrUpdate(device: ScannedDevice)
     suspend fun clearAll()
 }

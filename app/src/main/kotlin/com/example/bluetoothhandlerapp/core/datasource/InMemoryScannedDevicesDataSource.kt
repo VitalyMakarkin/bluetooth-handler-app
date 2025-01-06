@@ -21,6 +21,10 @@ class InMemoryScannedDevicesDataSource @Inject constructor() : ScannedDevicesDat
         }
     }
 
+    override suspend fun getByAddressOrNull(address: String): ScannedDevice? {
+        return _scannedDevicesFlow.value[address]
+    }
+
     override suspend fun addOrUpdate(device: ScannedDevice) {
         mutex.withLock {
             _scannedDevicesFlow.update { currentDevices ->
