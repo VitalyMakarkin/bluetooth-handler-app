@@ -6,7 +6,7 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 
 @HiltAndroidApp
-class App : Application() {
+class AndroidApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
