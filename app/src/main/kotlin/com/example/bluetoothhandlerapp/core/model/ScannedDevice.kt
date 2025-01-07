@@ -5,6 +5,6 @@ import kotlinx.datetime.Instant
 data class ScannedDevice(
     val address: String,
     val name: String,
-    val scannedAt: Instant,
+    val updatedAt: Instant,
     val rssi: Int,
 )

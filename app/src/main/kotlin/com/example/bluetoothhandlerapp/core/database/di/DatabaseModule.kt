@@ -22,10 +22,11 @@ internal object DatabaseModule {
     ): AppDatabase = Room.databaseBuilder(
         context,
         AppDatabase::class.java,
-        "db",
+        "database",
     ).build()
 
     @Provides
+    @Singleton
     fun provideCachedDeviceDao(database: AppDatabase): CachedDeviceDao {
         return database.cachedDeviceDao()
     }

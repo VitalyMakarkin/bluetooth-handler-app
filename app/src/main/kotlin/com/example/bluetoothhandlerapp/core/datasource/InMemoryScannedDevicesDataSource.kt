@@ -15,10 +15,14 @@ class InMemoryScannedDevicesDataSource @Inject constructor() : ScannedDevicesDat
     private val _scannedDevicesFlow: MutableStateFlow<Map<String, ScannedDevice>> = MutableStateFlow(emptyMap())
     private val mutex = Mutex()
 
-    override fun observeAll(maxLastScannedAt: Instant): Flow<List<ScannedDevice>> {
+    override fun observeAll(maxLastUpdatedAt: Instant): Flow<List<ScannedDevice>> {
         return _scannedDevicesFlow.map { devices ->
-            devices.filterValues { it.scannedAt >= maxLastScannedAt }.values.toList()
+            devices.filterValues { it.updatedAt >= maxLastUpdatedAt }.values.toList()
         }
+    }
+
+    override suspend fun getByAddressOrNull(address: String): ScannedDevice? {
+        return _scannedDevicesFlow.value[address]
     }
 
     override suspend fun addOrUpdate(device: ScannedDevice) {

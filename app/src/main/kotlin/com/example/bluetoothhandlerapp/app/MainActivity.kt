@@ -9,8 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.example.bluetoothhandlerapp.app.bluetooth.BluetoothLeHandler
+import com.example.bluetoothhandlerapp.app.navigation.AppNavHost
 import com.example.bluetoothhandlerapp.core.ui.theme.AppTheme
-import com.example.bluetoothhandlerapp.feature.devicesearch.ui.DeviceSearchScreen
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.aakira.napier.Napier
 import javax.inject.Inject
@@ -47,14 +47,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme(darkTheme = false) {
-                DeviceSearchScreen(
+                AppNavHost(
                     onScanClick = {
-                        // Don't do that
+                        // TODO: Don't do that and must be refactor
                         if (!bleHandler.getIsScanned()) bleHandler.startScan() else bleHandler.stopScan()
                     },
-                    onDeviceClick = { address ->
-                        bleHandler.connect(address)
-                    }
+//                    onDeviceClick = { address ->
+//                        // bleHandler.connect(address)
+//                    }
                 )
             }
         }

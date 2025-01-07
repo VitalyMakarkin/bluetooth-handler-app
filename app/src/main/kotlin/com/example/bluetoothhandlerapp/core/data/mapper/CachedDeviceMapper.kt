@@ -7,7 +7,7 @@ fun CachedDeviceEntity.mapToCachedDevice() = with(this) {
     CachedDevice(
         address = address,
         name = name,
-        scannedAt = scannedAt,
+        updatedAt = updatedAt,
     )
 }
 
@@ -16,6 +16,6 @@ fun CachedDevice.mapToCachedDeviceEntity(localId: Int = 0) = with(this) {
         localId = localId,
         address = address,
         name = name,
-        scannedAt = scannedAt,
+        updatedAt = updatedAt,
     )
 }

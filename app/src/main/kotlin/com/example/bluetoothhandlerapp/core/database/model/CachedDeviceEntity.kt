@@ -31,12 +31,12 @@ data class CachedDeviceEntity(
     val name: String,
 
     @ColumnInfo(name = COLUMN_SCANNED_AT)
-    val scannedAt: Instant,
+    val updatedAt: Instant,
 ) {
     companion object {
         const val COLUMN_LOCAL_ID = "localId"
         const val COLUMN_ADDRESS = "address"
         const val COLUMN_NAME = "name"
-        const val COLUMN_SCANNED_AT = "scannedAt"
+        const val COLUMN_SCANNED_AT = "updatedAt"
     }
 }
