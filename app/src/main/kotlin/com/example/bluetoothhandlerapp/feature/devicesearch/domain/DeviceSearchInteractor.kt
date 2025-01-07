@@ -9,7 +9,7 @@ import javax.inject.Inject
 class DeviceSearchInteractor @Inject constructor(
     private val scannedDevicesRepository: ScannedDevicesRepository,
 ) {
-    fun observeAll(maxLastScannedAt: Instant): Flow<List<ScannedDevice>> {
-        return scannedDevicesRepository.observeAll(maxLastScannedAt)
+    fun observeAll(maxLastUpdatedAt: Instant): Flow<List<ScannedDevice>> {
+        return scannedDevicesRepository.observeAll(maxLastUpdatedAt)
     }
 }

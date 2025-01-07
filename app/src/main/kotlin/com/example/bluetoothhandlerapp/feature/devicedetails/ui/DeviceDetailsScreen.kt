@@ -9,11 +9,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun DeviceDetailsScreen(
-    viewModel: DeviceDetailsViewModel = viewModel(),
+    viewModel: DeviceDetailsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Scaffold(
@@ -25,10 +25,14 @@ fun DeviceDetailsScreen(
         }
     ) { paddingValues ->
         uiState.device?.let {
-            Column(modifier = Modifier.padding(paddingValues)) {
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
+            ) {
                 Text(text = "Name: ${it.name}")
                 Text(text = "Address: ${it.address}")
-                Text(text = "UpdatedAt: ${it.scannedAt}")
+                Text(text = "UpdatedAt: ${it.updatedAt}")
             }
         }
     }

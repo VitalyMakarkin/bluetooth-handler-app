@@ -11,9 +11,9 @@ class DefaultScannedDevicesRepository @Inject constructor(
     private val scannedDevicesDataSource: ScannedDevicesDataSource,
 ) : ScannedDevicesRepository {
 
-    override fun observeAll(maxLastScannedAt: Instant): Flow<List<ScannedDevice>> {
-        Napier.d { "observeAll... maxLastScannedAt = $maxLastScannedAt" }
-        return scannedDevicesDataSource.observeAll(maxLastScannedAt)
+    override fun observeAll(maxLastUpdatedAt: Instant): Flow<List<ScannedDevice>> {
+        Napier.d { "observeAll... maxLastUpdatedAt = $maxLastUpdatedAt" }
+        return scannedDevicesDataSource.observeAll(maxLastUpdatedAt)
     }
 
     override suspend fun getByAddressOrNull(address: String): ScannedDevice? {

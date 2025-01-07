@@ -49,12 +49,12 @@ class MainActivity : ComponentActivity() {
             AppTheme(darkTheme = false) {
                 AppNavHost(
                     onScanClick = {
-                        // Don't do that
-                        // if (!bleHandler.getIsScanned()) bleHandler.startScan() else bleHandler.stopScan()
+                        // TODO: Don't do that and must be refactor
+                        if (!bleHandler.getIsScanned()) bleHandler.startScan() else bleHandler.stopScan()
                     },
-                    onDeviceClick = { address ->
-                        // bleHandler.connect(address)
-                    }
+//                    onDeviceClick = { address ->
+//                        // bleHandler.connect(address)
+//                    }
                 )
             }
         }

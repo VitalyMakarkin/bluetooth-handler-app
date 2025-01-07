@@ -1,5 +1,6 @@
 package com.example.bluetoothhandlerapp.feature.devicesearch.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bluetoothhandlerapp.feature.devicesearch.domain.DeviceSearchInteractor
@@ -15,11 +16,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DeviceSearchViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val interactor: DeviceSearchInteractor,
 ) : ViewModel() {
 
     val uiState: StateFlow<DeviceSearchUiState> = interactor.observeAll(
-        maxLastScannedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND)
+        maxLastUpdatedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND)
     )
         .map { devices ->
             DeviceSearchUiState(

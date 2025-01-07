@@ -10,7 +10,7 @@ class DeviceDetailsInteractor @Inject constructor(
     private val scannedDevicesRepository: ScannedDevicesRepository,
     private val cachedDevicesRepository: CachedDevicesRepository,
 ) {
-    fun observeByAddress(address: String): Flow<CachedDevice> {
+    fun observeByAddress(address: String): Flow<CachedDevice?> {
         return cachedDevicesRepository.observeByAddress(address)
     }
 
@@ -21,7 +21,7 @@ class DeviceDetailsInteractor @Inject constructor(
             CachedDevice(
                 address = it.address,
                 name = it.name,
-                scannedAt = it.scannedAt,
+                updatedAt = it.updatedAt,
             )
         }
         cachedDevicesRepository.upsert(cachedDevice)

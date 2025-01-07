@@ -86,7 +86,7 @@ class AndroidBluetoothLeHandler(
                     val device = ScannedDevice(
                         address = address,
                         name = device.name ?: "Unknown",
-                        scannedAt = Clock.System.now(),
+                        updatedAt = Clock.System.now(),
                         rssi = rssi,
                     )
                     scope.launch { scannedDevicesRepository.addOrUpdate(device) }

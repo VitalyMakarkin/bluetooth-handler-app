@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.Flow
 interface CachedDeviceDao {
 
     @Upsert
-    fun upsert(entity: CachedDeviceEntity)
+    suspend fun upsert(entity: CachedDeviceEntity)
 
     @Query("SELECT * FROM cached_devices WHERE address = :address")
-    fun observeByAddress(address: String): Flow<CachedDeviceEntity>
+    fun observeByAddress(address: String): Flow<CachedDeviceEntity?>
 
     @Query("DELETE FROM cached_devices")
-    fun clearTable()
+    suspend fun clearTable()
 }

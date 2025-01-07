@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
 interface ScannedDevicesDataSource {
-    fun observeAll(maxLastScannedAt: Instant): Flow<List<ScannedDevice>>
+    fun observeAll(maxLastUpdatedAt: Instant): Flow<List<ScannedDevice>>
     suspend fun getByAddressOrNull(address: String): ScannedDevice?
     suspend fun addOrUpdate(device: ScannedDevice)
     suspend fun clearAll()
