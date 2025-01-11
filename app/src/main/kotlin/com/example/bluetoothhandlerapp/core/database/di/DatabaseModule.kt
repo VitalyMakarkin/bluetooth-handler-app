@@ -22,8 +22,11 @@ internal object DatabaseModule {
     ): AppDatabase = Room.databaseBuilder(
         context,
         AppDatabase::class.java,
-        "database",
-    ).build()
+        "app.db",
+    )
+        .fallbackToDestructiveMigrationOnDowngrade()
+        .fallbackToDestructiveMigration()
+        .build()
 
     @Provides
     @Singleton
