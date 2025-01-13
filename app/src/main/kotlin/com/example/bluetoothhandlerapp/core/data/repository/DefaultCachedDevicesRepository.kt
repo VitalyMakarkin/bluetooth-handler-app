@@ -3,6 +3,7 @@ package com.example.bluetoothhandlerapp.core.data.repository
 import com.example.bluetoothhandlerapp.core.data.mapper.mapToCachedDevice
 import com.example.bluetoothhandlerapp.core.data.mapper.mapToCachedDeviceEntity
 import com.example.bluetoothhandlerapp.core.database.dao.CachedDeviceDao
+import com.example.bluetoothhandlerapp.core.database.model.CachedDeviceEntity
 import com.example.bluetoothhandlerapp.core.model.CachedDevice
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,13 @@ import javax.inject.Inject
 class DefaultCachedDevicesRepository @Inject constructor(
     private val cachedDeviceDao: CachedDeviceDao,
 ) : CachedDevicesRepository {
+
+    override fun observeAll(): Flow<List<CachedDevice>> {
+        Napier.d { "observeAll..." }
+        return cachedDeviceDao.observeAll().map { devices ->
+            devices.map(CachedDeviceEntity::mapToCachedDevice)
+        }
+    }
 
     override fun observeByAddress(address: String): Flow<CachedDevice?> {
         Napier.d { "observeByAddress... address = $address" }

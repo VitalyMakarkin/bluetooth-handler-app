@@ -9,10 +9,13 @@ import android.bluetooth.BluetoothDevice.TRANSPORT_LE
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGatt.GATT_SUCCESS
 import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.os.Build
 import android.os.Handler
@@ -25,6 +28,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import java.nio.ByteOrder
+import java.nio.charset.Charset
+import java.util.UUID
 
 @SuppressLint("MissingPermission") // TODO: Move check permissions
 class AndroidBluetoothLeHandler(
@@ -45,6 +51,10 @@ class AndroidBluetoothLeHandler(
     }
 
     override fun startScan() {
+        val settings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+            .build()
+
         if (_isScanning) throw IllegalStateException("BLE devices are already scanning!")
         handler.postDelayed(
             {
@@ -55,7 +65,7 @@ class AndroidBluetoothLeHandler(
             SCAN_PERIOD_IN_MILLIS,
         )
         _isScanning = true
-        bluetoothScanner.startScan(scanCallback)
+        bluetoothScanner.startScan(null, settings, scanCallback)
         Napier.d { "Scanning started..." }
     }
 
@@ -95,6 +105,7 @@ class AndroidBluetoothLeHandler(
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private val gattCallback: BluetoothGattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             Napier.d { "Connection state changed... gatt = $gatt, status = $status, newState = $newState" }
@@ -143,7 +154,70 @@ class AndroidBluetoothLeHandler(
             } else {
                 val services = gatt?.services ?: emptyList()
                 Napier.d { "Found ${services.size} services" }
+                services.forEach { service ->
+                    service.characteristics.map { characteristic ->
+                        if (service.uuid.toString() == "0000180d-0000-1000-8000-00805f9b34fb" && characteristic.uuid.toString() == "00002a37-0000-1000-8000-00805f9b34fb") {
+                            Napier.i { "serviceUuid = ${service.uuid} characteristic = ${characteristic.uuid} props = ${characteristic.properties}" }
+                            Napier.w { "Heart Rate found" }
+                            val isRead = gatt?.setCharacteristicNotification(characteristic, true)
+                            Napier.w { "Heart Rate try read: $isRead" }
+                            val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+                            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                            gatt?.writeDescriptor(descriptor)
+                            Napier.w { "Heart Rate descriptor updated" }
+                        }
+                    }
+                }
             }
         }
+
+        override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray, status: Int) {
+            super.onCharacteristicRead(gatt, characteristic, value, status)
+            Napier.i { "onCharacteristicRead: characteristic = ${characteristic.uuid} & value = $value " }
+        }
+
+        override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
+            super.onCharacteristicChanged(gatt, characteristic)
+            val value = characteristic?.value?.let { byteArrayToInt(it) }
+            Napier.i { "onCharacteristicChanged [deprecated]: characteristic = ${characteristic?.uuid},  value = $value" }
+        }
+
+        override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
+            super.onCharacteristicChanged(gatt, characteristic, value)
+            Napier.i { "onCharacteristicChanged: characteristic = ${characteristic.uuid} & value = $value" }
+        }
+
+        override fun onDescriptorWrite(gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int) {
+            super.onDescriptorWrite(gatt, descriptor, status)
+            Napier.i { "onDescriptorWrite: descriptor = ${descriptor?.uuid}, value = ${descriptor?.value?.toHexString()} & status = $status" }
+        }
     }
+
+    fun byteArrayToInt(bytes: ByteArray, byteOrder: ByteOrder = ByteOrder.BIG_ENDIAN): Int {
+        if (bytes.size > 4) {
+            throw IllegalArgumentException("Byte array size cannot be greater than 4 for Int")
+        }
+
+        var result = 0
+        val actualBytes = if (bytes.size < 4) {
+            val padded = ByteArray(4)
+            System.arraycopy(bytes, 0, padded, 4 - bytes.size, bytes.size)
+            padded
+        } else {
+            bytes
+        }
+
+
+        if (byteOrder == ByteOrder.BIG_ENDIAN) {
+            for (i in 0 until 4) {
+                result = (result shl 8) or (actualBytes[i].toInt() and 0xFF)
+            }
+        } else {
+            for (i in 3 downTo 0) {
+                result = (result shl 8) or (actualBytes[i].toInt() and 0xFF)
+            }
+        }
+        return result
+    }
+
 }

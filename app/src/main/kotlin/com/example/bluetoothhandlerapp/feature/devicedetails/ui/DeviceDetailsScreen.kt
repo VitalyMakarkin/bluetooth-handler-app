@@ -2,6 +2,7 @@ package com.example.bluetoothhandlerapp.feature.devicedetails.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun DeviceDetailsScreen(
     viewModel: DeviceDetailsViewModel = hiltViewModel(),
+    onReadClick: (address: String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Scaffold(
@@ -22,6 +24,13 @@ fun DeviceDetailsScreen(
                 text = "Device Details Screen",
                 modifier = Modifier.padding(all = 16.dp),
             )
+        },
+        floatingActionButton = {
+            uiState.device?.let {
+                FloatingActionButton(onClick = { onReadClick(it.address) }) {
+                    Text("READ")
+                }
+            }
         }
     ) { paddingValues ->
         uiState.device?.let {

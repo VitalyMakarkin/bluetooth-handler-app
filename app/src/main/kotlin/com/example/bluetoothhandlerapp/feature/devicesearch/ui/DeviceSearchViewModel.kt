@@ -7,7 +7,7 @@ import com.example.bluetoothhandlerapp.feature.devicesearch.domain.DeviceSearchI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -20,15 +20,16 @@ class DeviceSearchViewModel @Inject constructor(
     private val interactor: DeviceSearchInteractor,
 ) : ViewModel() {
 
-    val uiState: StateFlow<DeviceSearchUiState> = interactor.observeAll(
-        maxLastUpdatedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND)
-    )
-        .map { devices ->
-            DeviceSearchUiState(
-                scannedDevices = devices,
-                isLoading = false,
-            )
-        }
+    val uiState: StateFlow<DeviceSearchUiState> = combine(
+        interactor.observeCachedDevices(),
+        interactor.observeScannedDevices(maxLastUpdatedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND)),
+    ) { cachedDevices, scannedDevices ->
+        DeviceSearchUiState(
+            cachedDevices = cachedDevices,
+            scannedDevices = scannedDevices,
+            isLoading = false,
+        )
+    }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),

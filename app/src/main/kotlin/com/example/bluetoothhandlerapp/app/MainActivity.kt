@@ -52,9 +52,10 @@ class MainActivity : ComponentActivity() {
                         // TODO: Don't do that and must be refactor
                         if (!bleHandler.getIsScanned()) bleHandler.startScan() else bleHandler.stopScan()
                     },
-//                    onDeviceClick = { address ->
-//                        // bleHandler.connect(address)
-//                    }
+                    onReadClick = { address ->
+                        // TODO: Don't do that and must be refactor
+                        bleHandler.connect(address)
+                    }
                 )
             }
         }

@@ -17,7 +17,7 @@ data class DeviceDetails(val address: String)
 @Composable
 fun AppNavHost(
     onScanClick: () -> Unit,
-    // onDeviceClick: (String) -> Unit,
+    onReadClick: (String) -> Unit,
 ) {
     val navController = rememberNavController()
     NavHost(
@@ -27,16 +27,14 @@ fun AppNavHost(
         composable<DeviceSearch> {
             DeviceSearchScreen(
                 onScanClick = onScanClick,
-                onDeviceClick = { address ->
-                    navController.navigate(
-                        route = DeviceDetails(address),
-                    )
-                },
+                onDeviceClick = { address -> navController.navigate(route = DeviceDetails(address)) },
             )
         }
 
         composable<DeviceDetails> {
-            DeviceDetailsScreen()
+            DeviceDetailsScreen(
+                onReadClick = onReadClick,
+            )
         }
     }
 }
