@@ -1,0 +1,58 @@
+package com.example.bluetoothhandlerapp.app.bluetooth
+
+object GattServices {
+    private val services = buildMap {
+        put("00001800-0000-1000-8000-00805f9b34fb", "Generic Access")
+        put("00001801-0000-1000-8000-00805f9b34fb", "Generic Attribute")
+        put("00001802-0000-1000-8000-00805f9b34fb", "Immediate Alert")
+        put("00001803-0000-1000-8000-00805f9b34fb", "Link Loss")
+        put("00001804-0000-1000-8000-00805f9b34fb", "Tx Power")
+        put("00001805-0000-1000-8000-00805f9b34fb", "Current Time Service")
+        put("00001806-0000-1000-8000-00805f9b34fb", "Reference Time Update Service")
+        put("00001807-0000-1000-8000-00805f9b34fb", "Next DST Change Service")
+        put("00001808-0000-1000-8000-00805f9b34fb", "Glucose")
+        put("00001809-0000-1000-8000-00805f9b34fb", "Health Thermometer")
+        put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information")
+        put("0000180d-0000-1000-8000-00805f9b34fb", "Heart Rate")
+        put("0000180e-0000-1000-8000-00805f9b34fb", "Phone Alert Status Service")
+        put("0000180f-0000-1000-8000-00805f9b34fb", "Battery Service")
+        put("00001810-0000-1000-8000-00805f9b34fb", "Blood Pressure")
+        put("00001811-0000-1000-8000-00805f9b34fb", "Alert Notification Service")
+        put("00001812-0000-1000-8000-00805f9b34fb", "Human Interface Device")
+        put("00001813-0000-1000-8000-00805f9b34fb", "Scan Parameters")
+        put("00001814-0000-1000-8000-00805f9b34fb", "Running Speed and Cadence")
+        put("00001815-0000-1000-8000-00805f9b34fb", "Automation IO")
+        put("00001816-0000-1000-8000-00805f9b34fb", "Cycling Speed and Cadence")
+        put("00001818-0000-1000-8000-00805f9b34fb", "Cycling Power")
+        put("00001819-0000-1000-8000-00805f9b34fb", "Location and Navigation")
+        put("0000181a-0000-1000-8000-00805f9b34fb", "Environmental Sensing")
+        put("0000181b-0000-1000-8000-00805f9b34fb", "Body Composition")
+        put("0000181c-0000-1000-8000-00805f9b34fb", "User Data")
+        put("0000181d-0000-1000-8000-00805f9b34fb", "Weight Scale")
+        put("0000181e-0000-1000-8000-00805f9b34fb", "Bond Management Service")
+        put("0000181f-0000-1000-8000-00805f9b34fb", "Continuous Glucose Monitoring")
+        put("00001820-0000-1000-8000-00805f9b34fb", "Internet Protocol Support Service")
+        put("00001821-0000-1000-8000-00805f9b34fb", "Indoor Positioning")
+        put("00001822-0000-1000-8000-00805f9b34fb", "Pulse Oximeter Service")
+        put("00001823-0000-1000-8000-00805f9b34fb", "HTTP Proxy")
+        put("00001824-0000-1000-8000-00805f9b34fb", "Transport Discovery")
+        put("00001825-0000-1000-8000-00805f9b34fb", "Object Transfer Service")
+        put("00001826-0000-1000-8000-00805f9b34fb", "Fitness Machine")
+        put("00001827-0000-1000-8000-00805f9b34fb", "Mesh Provisioning Service")
+        put("00001828-0000-1000-8000-00805f9b34fb", "Mesh Proxy Service")
+        put("00001829-0000-1000-8000-00805f9b34fb", "Reconnection Configuration")
+        put("00002a37-0000-1000-8000-00805f9b34fb", "Heart Rate Measurement")
+        put("00002a29-0000-1000-8000-00805f9b34fb", "Manufacturer Name String")
+        put("00002a00-0000-1000-8000-00805f9b34fb", "Device Name")
+        put("00002a01-0000-1000-8000-00805f9b34fb", "Appearance")
+        put("00002a02-0000-1000-8000-00805f9b34fb", "Peripheral Privacy Flag")
+        put("00002a03-0000-1000-8000-00805f9b34fb", "Reconnection Address")
+        put("00002a04-0000-1000-8000-00805f9b34fb", "Manufacturer Name String")
+        put("00002a05-0000-1000-8000-00805f9b34fb", "Service Changed")
+        put("00002A06-0000-1000-8000-00805f9b34fb", "Alert level")
+    }
+
+    fun getNameByUuid(uuid: String): String {
+        return services[uuid] ?: "Unknown"
+    }
+}

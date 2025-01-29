@@ -1,6 +1,8 @@
 package com.example.bluetoothhandlerapp.core.datasource.di
 
+import com.example.bluetoothhandlerapp.core.datasource.InMemoryScannedServicesDataSource
 import com.example.bluetoothhandlerapp.core.datasource.InMemoryScannedDevicesDataSource
+import com.example.bluetoothhandlerapp.core.datasource.ScannedServicesDataSource
 import com.example.bluetoothhandlerapp.core.datasource.ScannedDevicesDataSource
 import dagger.Binds
 import dagger.Module
@@ -17,4 +19,10 @@ abstract class DataSourceModule {
     abstract fun bindScannedDevicesDataSource(
         dataSource: InMemoryScannedDevicesDataSource,
     ): ScannedDevicesDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindScannedCharacteristicsDataSource(
+        dataSource: InMemoryScannedServicesDataSource,
+    ): ScannedServicesDataSource
 }

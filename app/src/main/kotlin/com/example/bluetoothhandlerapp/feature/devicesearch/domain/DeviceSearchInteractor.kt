@@ -5,7 +5,7 @@ import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesReposi
 import com.example.bluetoothhandlerapp.core.model.CachedDevice
 import com.example.bluetoothhandlerapp.core.model.ScannedDevice
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DeviceSearchInteractor @Inject constructor(
@@ -13,10 +13,12 @@ class DeviceSearchInteractor @Inject constructor(
     private val scannedDevicesRepository: ScannedDevicesRepository,
 ) {
     fun observeCachedDevices(): Flow<List<CachedDevice>> {
-        return cachedDevicesRepository.observeAll()
+        return cachedDevicesRepository.observeAll().map {
+            it.sortedByDescending { it.updatedAt }
+        }
     }
 
-    fun observeScannedDevices(maxLastUpdatedAt: Instant): Flow<List<ScannedDevice>> {
-        return scannedDevicesRepository.observeAll(maxLastUpdatedAt)
+    fun observeScannedDevices(): Flow<List<ScannedDevice>> {
+        return scannedDevicesRepository.observeAllDevices()
     }
 }

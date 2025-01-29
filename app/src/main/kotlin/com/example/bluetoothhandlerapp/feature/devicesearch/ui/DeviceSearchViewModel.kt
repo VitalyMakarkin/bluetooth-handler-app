@@ -9,9 +9,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.minus
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +19,7 @@ class DeviceSearchViewModel @Inject constructor(
 
     val uiState: StateFlow<DeviceSearchUiState> = combine(
         interactor.observeCachedDevices(),
-        interactor.observeScannedDevices(maxLastUpdatedAt = Clock.System.now().minus(4, DateTimeUnit.SECOND)),
+        interactor.observeScannedDevices(),
     ) { cachedDevices, scannedDevices ->
         DeviceSearchUiState(
             cachedDevices = cachedDevices,

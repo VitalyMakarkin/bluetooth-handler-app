@@ -3,6 +3,7 @@ package com.example.bluetoothhandlerapp.feature.devicedetails.domain
 import com.example.bluetoothhandlerapp.core.data.repository.CachedDevicesRepository
 import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesRepository
 import com.example.bluetoothhandlerapp.core.model.CachedDevice
+import com.example.bluetoothhandlerapp.core.model.DeviceService
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -14,8 +15,12 @@ class DeviceDetailsInteractor @Inject constructor(
         return cachedDevicesRepository.observeByAddress(address)
     }
 
+    fun observeScannedDeviceServices(address: String): Flow<List<DeviceService>> {
+        return scannedDevicesRepository.observeServices(address)
+    }
+
     suspend fun updateByAddress(address: String) = runCatching {
-        val device = scannedDevicesRepository.getByAddressOrNull(address)
+        val device = scannedDevicesRepository.getDeviceByAddressOrNull(address)
             ?: throw IllegalStateException("Not found scanned device by address = $address")
         val cachedDevice = device.let {
             CachedDevice(

@@ -21,6 +21,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesRepository
+import com.example.bluetoothhandlerapp.core.datasource.model.ScannedService
 import com.example.bluetoothhandlerapp.core.model.ScannedDevice
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
@@ -28,9 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import java.nio.ByteOrder
-import java.nio.charset.Charset
-import java.util.UUID
 
 @SuppressLint("MissingPermission") // TODO: Move check permissions
 class AndroidBluetoothLeHandler(
@@ -48,6 +46,7 @@ class AndroidBluetoothLeHandler(
 
     companion object {
         const val SCAN_PERIOD_IN_MILLIS: Long = 10_000L
+        const val GATT_ERROR = 0x0081
     }
 
     override fun startScan() {
@@ -99,7 +98,7 @@ class AndroidBluetoothLeHandler(
                         updatedAt = Clock.System.now(),
                         rssi = rssi,
                     )
-                    scope.launch { scannedDevicesRepository.addOrUpdate(device) }
+                    scope.launch { scannedDevicesRepository.addOrUpdateDevice(device) }
                 }
             }
         }
@@ -148,26 +147,42 @@ class AndroidBluetoothLeHandler(
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             super.onServicesDiscovered(gatt, status)
             Napier.d { "Services discovered on device... status = $status" }
-            if (status == 0x0081) { // TODO: Check code
+            if (status == GATT_ERROR) {
                 Napier.d { "Discovering service failed" }
                 gatt?.disconnect()
             } else {
                 val services = gatt?.services ?: emptyList()
                 Napier.d { "Found ${services.size} services" }
-                services.forEach { service ->
-                    service.characteristics.map { characteristic ->
-                        if (service.uuid.toString() == "0000180d-0000-1000-8000-00805f9b34fb" && characteristic.uuid.toString() == "00002a37-0000-1000-8000-00805f9b34fb") {
-                            Napier.i { "serviceUuid = ${service.uuid} characteristic = ${characteristic.uuid} props = ${characteristic.properties}" }
-                            Napier.w { "Heart Rate found" }
-                            val isRead = gatt?.setCharacteristicNotification(characteristic, true)
-                            Napier.w { "Heart Rate try read: $isRead" }
-                            val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
-                            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-                            gatt?.writeDescriptor(descriptor)
-                            Napier.w { "Heart Rate descriptor updated" }
+                gatt?.device?.address?.let { deviceAddress ->
+                    services.forEach { s ->
+                        Napier.w { "Service: ${GattServices.getNameByUuid(s.uuid.toString())} [${s.uuid.toString()}]" }
+                        s.characteristics.forEach { c ->
+                            Napier.w { "Characteristic: ${GattCharacteristics.getNameByUuid(c.uuid.toString())} [${c.uuid.toString()}]" }
+
+                        }
+                    }
+                    services.forEach { service ->
+                        scope.launch {
+                            val characteristicUuids = service.characteristics.map { it.uuid.toString() }.toSet()
+                            val scannedService = ScannedService(uuid = service.uuid.toString(), characteristicUuids = characteristicUuids)
+                            scannedDevicesRepository.addOrIgnoreScannedService(deviceAddress = deviceAddress, service = scannedService)
                         }
                     }
                 }
+//                deviceAddress?.let {
+//                    service.characteristics.map { characteristic ->
+//                        if (service.uuid.toString() == "0000180d-0000-1000-8000-00805f9b34fb" && characteristic.uuid.toString() == "00002a37-0000-1000-8000-00805f9b34fb") {
+//                            Napier.i { "serviceUuid = ${service.uuid} characteristic = ${characteristic.uuid} props = ${characteristic.properties}" }
+//                            Napier.w { "Heart Rate found" }
+//                            val isRead = gatt?.setCharacteristicNotification(characteristic, true)
+//                            Napier.w { "Heart Rate try read: $isRead" }
+//                            val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+//                            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+//                            gatt?.writeDescriptor(descriptor)
+//                            Napier.w { "Heart Rate descriptor updated" }
+//                        }
+//                    }
+//                }
             }
         }
 
@@ -192,32 +207,4 @@ class AndroidBluetoothLeHandler(
             Napier.i { "onDescriptorWrite: descriptor = ${descriptor?.uuid}, value = ${descriptor?.value?.toHexString()} & status = $status" }
         }
     }
-
-    fun byteArrayToInt(bytes: ByteArray, byteOrder: ByteOrder = ByteOrder.BIG_ENDIAN): Int {
-        if (bytes.size > 4) {
-            throw IllegalArgumentException("Byte array size cannot be greater than 4 for Int")
-        }
-
-        var result = 0
-        val actualBytes = if (bytes.size < 4) {
-            val padded = ByteArray(4)
-            System.arraycopy(bytes, 0, padded, 4 - bytes.size, bytes.size)
-            padded
-        } else {
-            bytes
-        }
-
-
-        if (byteOrder == ByteOrder.BIG_ENDIAN) {
-            for (i in 0 until 4) {
-                result = (result shl 8) or (actualBytes[i].toInt() and 0xFF)
-            }
-        } else {
-            for (i in 3 downTo 0) {
-                result = (result shl 8) or (actualBytes[i].toInt() and 0xFF)
-            }
-        }
-        return result
-    }
-
 }

@@ -1,12 +1,18 @@
 package com.example.bluetoothhandlerapp.core.data.repository
 
+import com.example.bluetoothhandlerapp.core.datasource.model.ScannedService
+import com.example.bluetoothhandlerapp.core.model.DeviceCharacteristic
+import com.example.bluetoothhandlerapp.core.model.DeviceService
 import com.example.bluetoothhandlerapp.core.model.ScannedDevice
 import kotlinx.coroutines.flow.Flow
-import kotlinx.datetime.Instant
 
 interface ScannedDevicesRepository {
-    fun observeAll(maxLastUpdatedAt: Instant): Flow<List<ScannedDevice>>
-    suspend fun getByAddressOrNull(address: String): ScannedDevice?
-    suspend fun addOrUpdate(device: ScannedDevice)
-    suspend fun clearAll()
+    fun observeAllDevices(): Flow<List<ScannedDevice>>
+    suspend fun getDeviceByAddressOrNull(address: String): ScannedDevice?
+    suspend fun addOrUpdateDevice(device: ScannedDevice)
+    fun observeServices(address: String): Flow<List<DeviceService>>
+    fun observeCharacteristics(address: String, uuid: String): Flow<List<DeviceCharacteristic>>
+    suspend fun addOrIgnoreScannedService(deviceAddress: String, service: ScannedService)
+    suspend fun clearServicesByDeviceAddress(address: String)
+    suspend fun clearAllDevices()
 }

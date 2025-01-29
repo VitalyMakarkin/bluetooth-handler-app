@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.datetime.Instant
 import javax.inject.Inject
 
 class InMemoryScannedDevicesDataSource @Inject constructor() : ScannedDevicesDataSource {
@@ -15,9 +14,9 @@ class InMemoryScannedDevicesDataSource @Inject constructor() : ScannedDevicesDat
     private val _scannedDevicesFlow: MutableStateFlow<Map<String, ScannedDevice>> = MutableStateFlow(emptyMap())
     private val mutex = Mutex()
 
-    override fun observeAll(maxLastUpdatedAt: Instant): Flow<List<ScannedDevice>> {
+    override fun observeAll(): Flow<List<ScannedDevice>> {
         return _scannedDevicesFlow.map { devices ->
-            devices.filterValues { it.updatedAt >= maxLastUpdatedAt }.values.toList()
+            devices.values.toList()
         }
     }
 

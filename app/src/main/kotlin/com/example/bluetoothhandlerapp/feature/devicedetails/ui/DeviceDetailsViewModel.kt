@@ -10,7 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -22,10 +22,13 @@ class DeviceDetailsViewModel @Inject constructor(
     private val interactor: DeviceDetailsInteractor,
 ) : ViewModel() {
     private val deviceDetails = savedStateHandle.toRoute<DeviceDetails>()
-    val uiState: StateFlow<DeviceDetailsUiState> = interactor.observeByAddress(address = deviceDetails.address)
-        .map { device ->
+    val uiState: StateFlow<DeviceDetailsUiState> = combine(
+        interactor.observeByAddress(address = deviceDetails.address),
+        interactor.observeScannedDeviceServices(address = deviceDetails.address)
+    ) { device, services ->
             DeviceDetailsUiState(
                 device = device,
+                services = services,
                 isLoading = false,
             )
         }
