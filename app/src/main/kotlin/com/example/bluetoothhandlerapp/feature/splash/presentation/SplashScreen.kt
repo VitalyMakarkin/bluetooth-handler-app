@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.splash.ui
+package com.example.bluetoothhandlerapp.feature.splash.presentation
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

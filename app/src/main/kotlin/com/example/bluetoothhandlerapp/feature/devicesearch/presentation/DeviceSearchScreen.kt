@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.devicesearch.ui
+package com.example.bluetoothhandlerapp.feature.devicesearch.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -27,7 +28,8 @@ import com.example.bluetoothhandlerapp.core.ui.theme.AppTheme
 fun DeviceSearchScreen(
     viewModel: DeviceSearchViewModel = hiltViewModel(),
     onDeviceClick: (address: String) -> Unit,
-    onScanClick: () -> Unit,
+    onScanClick: () -> Unit, // TODO: Remove from parameter, change to composable Effect
+    onOpenLogs: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Scaffold(
@@ -38,7 +40,12 @@ fun DeviceSearchScreen(
                         text = "Devices",
                         modifier = Modifier.padding(all = 16.dp),
                     )
-                }
+                },
+                actions = {
+                    Button(onClick = onOpenLogs) {
+                        Text(text = "LOGS")
+                    }
+                },
             )
         },
         floatingActionButton = {
@@ -113,6 +120,7 @@ fun DeviceSearchScreenPreview() {
         DeviceSearchScreen(
             onDeviceClick = {},
             onScanClick = {},
+            onOpenLogs = {},
         )
     }
 }

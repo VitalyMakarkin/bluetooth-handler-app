@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.devicedetails.ui
+package com.example.bluetoothhandlerapp.feature.servicedetails.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,9 +27,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeviceDetailsScreen(
-    viewModel: DeviceDetailsViewModel = hiltViewModel(),
-    onReadClick: (address: String) -> Unit,
+fun ServiceDetailsScreen(
+    viewModel: ServiceDetailsViewModel = hiltViewModel(),
+    onListenClick: () -> Unit,
+    onOpenLogs: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Scaffold(
@@ -37,21 +38,19 @@ fun DeviceDetailsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Device Details",
+                        text = "Service Details",
                         modifier = Modifier.padding(all = 16.dp),
                     )
-                }
+                },
+                actions = {
+                    Button(onClick = onOpenLogs) {
+                        Text(text = "LOGS")
+                    }
+                },
             )
         },
-        floatingActionButton = {
-            uiState.device?.let {
-                FloatingActionButton(onClick = { onReadClick(it.address) }) {
-                    Text("READ")
-                }
-            }
-        }
     ) { paddingValues ->
-        uiState.device?.let {
+        uiState.serviceDetails?.let {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -63,31 +62,27 @@ fun DeviceDetailsScreen(
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
                 Text(
-                    text = "Address: ${it.address}",
+                    text = "Address: ${it.uuid}",
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
-                Text(
-                    text = "UpdatedAt: ${it.updatedAt}",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-                if (uiState.services.isNotEmpty()) {
+                if (uiState.characteristics.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     HorizontalDivider()
-                    uiState.services.forEach { service ->
+                    uiState.characteristics.forEach { characteristic ->
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 4.dp),
                         ) {
                             Text(
-                                text = service.name,
+                                text = characteristic.name,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                             )
                             Text(
-                                text = service.uuid,
+                                text = characteristic.uuid,
                                 color = Color.Gray.copy(alpha = 0.5f),
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Medium,
@@ -97,7 +92,6 @@ fun DeviceDetailsScreen(
                         }
                         HorizontalDivider()
                     }
-
                 }
             }
         }

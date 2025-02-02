@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.devicedetails.ui
+package com.example.bluetoothhandlerapp.feature.devicedetails.presentation
 
 import com.example.bluetoothhandlerapp.core.model.CachedDevice
 import com.example.bluetoothhandlerapp.core.model.DeviceService

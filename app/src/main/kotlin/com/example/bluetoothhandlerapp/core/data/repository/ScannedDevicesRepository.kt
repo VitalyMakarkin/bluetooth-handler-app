@@ -11,6 +11,7 @@ interface ScannedDevicesRepository {
     suspend fun getDeviceByAddressOrNull(address: String): ScannedDevice?
     suspend fun addOrUpdateDevice(device: ScannedDevice)
     fun observeServices(address: String): Flow<List<DeviceService>>
+    fun observeService(address: String, uuid: String): Flow<DeviceService>
     fun observeCharacteristics(address: String, uuid: String): Flow<List<DeviceCharacteristic>>
     suspend fun addOrIgnoreScannedService(deviceAddress: String, service: ScannedService)
     suspend fun clearServicesByDeviceAddress(address: String)

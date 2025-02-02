@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.devicesearch.ui
+package com.example.bluetoothhandlerapp.feature.devicesearch.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

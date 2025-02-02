@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.main.ui
+package com.example.bluetoothhandlerapp.feature.main.presentation
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

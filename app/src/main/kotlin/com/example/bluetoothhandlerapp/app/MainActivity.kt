@@ -55,6 +55,9 @@ class MainActivity : ComponentActivity() {
                     onReadClick = { address ->
                         // TODO: Don't do that and must be refactor
                         bleHandler.connect(address)
+                    },
+                    onListenClick = {
+                        // TODO: Don't do that and must be refactor
                     }
                 )
             }

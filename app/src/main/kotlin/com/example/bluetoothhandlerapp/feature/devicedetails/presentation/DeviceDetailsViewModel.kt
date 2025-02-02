@@ -1,4 +1,4 @@
-package com.example.bluetoothhandlerapp.feature.devicedetails.ui
+package com.example.bluetoothhandlerapp.feature.devicedetails.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
