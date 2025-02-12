@@ -44,6 +44,7 @@ fun DeviceLogsScreen(
             items(uiState.logs) {
                 Text(
                     text = it,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
                 )

@@ -1,5 +1,6 @@
 package com.example.bluetoothhandlerapp.feature.devicedetails.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -25,12 +27,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeviceDetailsScreen(
     viewModel: DeviceDetailsViewModel = hiltViewModel(),
     onReadClick: (address: String) -> Unit, // TODO: Remove from parameter, change to composable Effect
+    onOpenService: (address: String, serviceUuid: String) -> Unit,
     onOpenLogs: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -84,12 +91,13 @@ fun DeviceDetailsScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .clickable { onOpenService(it.address, service.uuid) }
                                 .padding(horizontal = 16.dp, vertical = 4.dp),
                         ) {
                             Text(
                                 text = service.name,
                                 fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.Normal,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                             )
@@ -106,6 +114,19 @@ fun DeviceDetailsScreen(
                     }
                 }
             }
+        }
+    }
+
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.updateDevice()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }

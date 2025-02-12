@@ -8,19 +8,6 @@ import com.example.bluetoothhandlerapp.feature.devicedetails.presentation.Device
 import com.example.bluetoothhandlerapp.feature.devicelogs.presentation.DeviceLogsScreen
 import com.example.bluetoothhandlerapp.feature.devicesearch.presentation.DeviceSearchScreen
 import com.example.bluetoothhandlerapp.feature.servicedetails.presentation.ServiceDetailsScreen
-import kotlinx.serialization.Serializable
-
-@Serializable
-object DeviceSearch
-
-@Serializable
-data class DeviceDetails(val address: String)
-
-@Serializable
-data class ServiceDetails(val address: String, val uuid: String)
-
-@Serializable
-object DeviceLogs
 
 @Composable
 fun AppNavHost(
@@ -31,31 +18,32 @@ fun AppNavHost(
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = DeviceSearch,
+        startDestination = Screen.DeviceSearch,
     ) {
-        composable<DeviceSearch> {
+        composable<Screen.DeviceSearch> {
             DeviceSearchScreen(
                 onScanClick = onScanClick,
-                onDeviceClick = { address -> navController.navigate(route = DeviceDetails(address)) },
-                onOpenLogs = { navController.navigate(route = DeviceLogs) },
+                onDeviceClick = { address -> navController.navigate(route = Screen.DeviceDetails(address)) },
+                onOpenLogs = { navController.navigate(route = Screen.DeviceLogs) },
             )
         }
 
-        composable<DeviceDetails> {
+        composable<Screen.DeviceDetails> {
             DeviceDetailsScreen(
                 onReadClick = onReadClick,
-                onOpenLogs = { navController.navigate(route = DeviceLogs) },
+                onOpenService = { address, serviceUuid -> navController.navigate(route = Screen.ServiceDetails(address, serviceUuid)) },
+                onOpenLogs = { navController.navigate(route = Screen.DeviceLogs) },
             )
         }
 
-        composable<ServiceDetails> {
+        composable<Screen.ServiceDetails> {
             ServiceDetailsScreen(
                 onListenClick = onListenClick,
-                onOpenLogs = { navController.navigate(route = DeviceLogs) },
+                onOpenLogs = { navController.navigate(route = Screen.DeviceLogs) },
             )
         }
 
-        composable<DeviceLogs> {
+        composable<Screen.DeviceLogs> {
             DeviceLogsScreen()
         }
     }

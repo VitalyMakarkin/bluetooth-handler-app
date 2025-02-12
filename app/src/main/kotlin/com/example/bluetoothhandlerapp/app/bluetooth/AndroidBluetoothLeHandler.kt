@@ -20,6 +20,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import com.example.bluetoothhandlerapp.core.data.repository.DeviceLogsRepository
 import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesRepository
 import com.example.bluetoothhandlerapp.core.datasource.model.ScannedService
 import com.example.bluetoothhandlerapp.core.model.ScannedDevice
@@ -29,11 +30,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import java.util.UUID
 
 @SuppressLint("MissingPermission") // TODO: Move check permissions
 class AndroidBluetoothLeHandler(
     private val context: Context,
     private val scannedDevicesRepository: ScannedDevicesRepository,
+    private val deviceLogsRepository: DeviceLogsRepository,
 ) : BluetoothLeHandler {
 
     private val bluetoothManager: BluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -84,6 +87,34 @@ class AndroidBluetoothLeHandler(
         val device = bluetoothAdapter.getRemoteDevice(address)
         val gatt = device.connectGatt(context, true, gattCallback, TRANSPORT_LE)
         Napier.d { "Connected... gatt = $gatt" }
+    }
+
+    override fun listen(address: String, serviceUuid: String, characteristicUuid: String) {
+        Napier.d { "Listening started... address = $address, serviceUuid = $serviceUuid, characteristicUuid = $characteristicUuid" }
+//                deviceAddress?.let {
+//                    service.characteristics.map { characteristic ->
+//                        if (service.uuid.toString() == "0000180d-0000-1000-8000-00805f9b34fb" && characteristic.uuid.toString() == "00002a37-0000-1000-8000-00805f9b34fb") {
+//                            Napier.i { "serviceUuid = ${service.uuid} characteristic = ${characteristic.uuid} props = ${characteristic.properties}" }
+//                            Napier.w { "Heart Rate found" }
+//                            val isRead = gatt?.setCharacteristicNotification(characteristic, true)
+//                            Napier.w { "Heart Rate try read: $isRead" }
+//                            val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+//                            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+//                            gatt?.writeDescriptor(descriptor)
+//                            Napier.w { "Heart Rate descriptor updated" }
+//                        }
+//                    }
+//                }
+//
+//        Work only Heart Rate
+//        if (serviceUuid == "0000180d-0000-1000-8000-00805f9b34fb" && characteristicUuid == "00002a37-0000-1000-8000-00805f9b34fb") {
+//            val device = bluetoothAdapter.getRemoteDevice(address)
+//            val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+//            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+//        } else {
+//            Napier.d { "Not yet implemented" }
+//        }
+        Napier.d { "Listening... address = $address, serviceUuid = $serviceUuid, characteristicUuid = $characteristicUuid" }
     }
 
     private val scanCallback: ScanCallback = object : ScanCallback() {
@@ -154,11 +185,24 @@ class AndroidBluetoothLeHandler(
                 val services = gatt?.services ?: emptyList()
                 Napier.d { "Found ${services.size} services" }
                 gatt?.device?.address?.let { deviceAddress ->
-                    services.forEach { s ->
-                        Napier.w { "Service: ${GattServices.getNameByUuid(s.uuid.toString())} [${s.uuid.toString()}]" }
-                        s.characteristics.forEach { c ->
-                            Napier.w { "Characteristic: ${GattCharacteristics.getNameByUuid(c.uuid.toString())} [${c.uuid.toString()}]" }
-
+                    services.forEach { service ->
+                        Napier.w { "Service: ${GattServices.getNameByUuid(service.uuid.toString())} [${service.uuid}]" }
+                        service.characteristics.forEach { c ->
+                            Napier.w { "Characteristic: ${GattCharacteristics.getNameByUuid(c.uuid.toString())} [${c.uuid}]" }
+                            deviceAddress?.let {
+                                service.characteristics.map { characteristic ->
+                                    if (service.uuid.toString() == "0000180d-0000-1000-8000-00805f9b34fb" && characteristic.uuid.toString() == "00002a37-0000-1000-8000-00805f9b34fb") {
+                                        Napier.i { "serviceUuid = ${service.uuid} characteristic = ${characteristic.uuid} props = ${characteristic.properties}" }
+                                        Napier.w { "Heart Rate found" }
+                                        val isRead = gatt?.setCharacteristicNotification(characteristic, true)
+                                        Napier.w { "Heart Rate try read: $isRead" }
+                                        val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
+                                        descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                                        gatt?.writeDescriptor(descriptor)
+                                        Napier.w { "Heart Rate descriptor updated" }
+                                    }
+                                }
+                            }
                         }
                     }
                     services.forEach { service ->
@@ -169,42 +213,40 @@ class AndroidBluetoothLeHandler(
                         }
                     }
                 }
-//                deviceAddress?.let {
-//                    service.characteristics.map { characteristic ->
-//                        if (service.uuid.toString() == "0000180d-0000-1000-8000-00805f9b34fb" && characteristic.uuid.toString() == "00002a37-0000-1000-8000-00805f9b34fb") {
-//                            Napier.i { "serviceUuid = ${service.uuid} characteristic = ${characteristic.uuid} props = ${characteristic.properties}" }
-//                            Napier.w { "Heart Rate found" }
-//                            val isRead = gatt?.setCharacteristicNotification(characteristic, true)
-//                            Napier.w { "Heart Rate try read: $isRead" }
-//                            val descriptor = characteristic.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
-//                            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-//                            gatt?.writeDescriptor(descriptor)
-//                            Napier.w { "Heart Rate descriptor updated" }
-//                        }
-//                    }
-//                }
             }
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray, status: Int) {
             super.onCharacteristicRead(gatt, characteristic, value, status)
-            Napier.i { "onCharacteristicRead: characteristic = ${characteristic.uuid} & value = $value " }
+            Napier.i { "onCharacteristicRead: characteristic = ${characteristic.uuid} & value = $value" }
+            scope.launch {
+                deviceLogsRepository.insert("onCharacteristicRead: characteristic = ${characteristic.uuid} & value = $value")
+            }
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
             super.onCharacteristicChanged(gatt, characteristic)
             val value = characteristic?.value?.let { byteArrayToInt(it) }
-            Napier.i { "onCharacteristicChanged [deprecated]: characteristic = ${characteristic?.uuid},  value = $value" }
+            Napier.i { "onCharacteristicChanged [deprecated]: characteristic = ${characteristic?.uuid}, value = $value" }
+            scope.launch {
+                deviceLogsRepository.insert("onCharacteristicChanged [deprecated]: characteristic = ${characteristic?.uuid}, value = $value")
+            }
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
             super.onCharacteristicChanged(gatt, characteristic, value)
             Napier.i { "onCharacteristicChanged: characteristic = ${characteristic.uuid} & value = $value" }
+            scope.launch {
+                deviceLogsRepository.insert("onCharacteristicChanged: characteristic = ${characteristic.uuid} & value = $value")
+            }
         }
 
         override fun onDescriptorWrite(gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int) {
             super.onDescriptorWrite(gatt, descriptor, status)
             Napier.i { "onDescriptorWrite: descriptor = ${descriptor?.uuid}, value = ${descriptor?.value?.toHexString()} & status = $status" }
+            scope.launch {
+                deviceLogsRepository.insert("onDescriptorWrite: descriptor = ${descriptor?.uuid}, value = ${descriptor?.value?.toHexString()} & status = $status")
+            }
         }
     }
 }

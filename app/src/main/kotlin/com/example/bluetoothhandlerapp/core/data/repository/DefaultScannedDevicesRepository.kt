@@ -46,7 +46,15 @@ class DefaultScannedDevicesRepository @Inject constructor(
     }
 
     override fun observeService(address: String, uuid: String): Flow<DeviceService> {
-        TODO("Not yet implemented")
+        Napier.d { "observeService... address = $address, uuid = $uuid" }
+        return scannedServicesDataSource.observeAllByDeviceAddress(address)
+            .map { list -> list.first { it.uuid == uuid } }
+            .map {
+                DeviceService(
+                    uuid = it.uuid,
+                    name = GattServices.getNameByUuid(it.uuid),
+                )
+            }
     }
 
     override fun observeCharacteristics(address: String, uuid: String): Flow<List<DeviceCharacteristic>> {

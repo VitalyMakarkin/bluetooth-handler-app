@@ -61,7 +61,7 @@ fun DeviceSearchScreen(
                     Column {
                         Text(
                             text = "Cached devices",
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Normal,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 4.dp),
@@ -87,7 +87,7 @@ fun DeviceSearchScreen(
                     Column {
                         Text(
                             text = "Scanned devices",
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Normal,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 4.dp),

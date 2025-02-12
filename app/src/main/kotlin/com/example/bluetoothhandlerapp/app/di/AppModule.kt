@@ -3,6 +3,7 @@ package com.example.bluetoothhandlerapp.app.di
 import android.content.Context
 import com.example.bluetoothhandlerapp.app.bluetooth.BluetoothLeHandler
 import com.example.bluetoothhandlerapp.app.bluetooth.AndroidBluetoothLeHandler
+import com.example.bluetoothhandlerapp.core.data.repository.DeviceLogsRepository
 import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesRepository
 import dagger.Module
 import dagger.Provides
@@ -20,10 +21,12 @@ class AppModule {
     fun provideBluetoothLeHandler(
         @ApplicationContext context: Context,
         scannedDevicesRepository: ScannedDevicesRepository,
+        deviceLogsRepository: DeviceLogsRepository,
     ): BluetoothLeHandler {
         return AndroidBluetoothLeHandler(
             context,
             scannedDevicesRepository,
+            deviceLogsRepository,
         )
     }
 }

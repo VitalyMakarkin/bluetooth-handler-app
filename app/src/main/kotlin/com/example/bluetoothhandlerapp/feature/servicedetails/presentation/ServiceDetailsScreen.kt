@@ -77,7 +77,7 @@ fun ServiceDetailsScreen(
                             Text(
                                 text = characteristic.name,
                                 fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.Normal,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                             )
@@ -96,4 +96,6 @@ fun ServiceDetailsScreen(
             }
         }
     }
+
+    // Show approve listen characteristic dialog
 }

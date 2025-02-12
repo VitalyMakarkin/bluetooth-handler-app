@@ -5,4 +5,5 @@ interface BluetoothLeHandler {
     fun stopScan()
     fun getIsScanned(): Boolean // TODO: remove
     fun connect(address: String)
+    fun listen(address: String, serviceUuid: String, characteristicUuid: String)
 }

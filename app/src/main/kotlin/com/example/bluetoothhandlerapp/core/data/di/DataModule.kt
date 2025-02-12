@@ -2,7 +2,9 @@ package com.example.bluetoothhandlerapp.core.data.di
 
 import com.example.bluetoothhandlerapp.core.data.repository.CachedDevicesRepository
 import com.example.bluetoothhandlerapp.core.data.repository.DefaultCachedDevicesRepository
+import com.example.bluetoothhandlerapp.core.data.repository.DefaultDeviceLogsRepository
 import com.example.bluetoothhandlerapp.core.data.repository.DefaultScannedDevicesRepository
+import com.example.bluetoothhandlerapp.core.data.repository.DeviceLogsRepository
 import com.example.bluetoothhandlerapp.core.data.repository.ScannedDevicesRepository
 import dagger.Binds
 import dagger.Module
@@ -22,4 +24,9 @@ abstract class DataModule {
     abstract fun bindCachedDevicesRepository(
         repository: DefaultCachedDevicesRepository,
     ): CachedDevicesRepository
+
+    @Binds
+    abstract fun bindDeviceLogsRepository(
+        repository: DefaultDeviceLogsRepository,
+    ): DeviceLogsRepository
 }

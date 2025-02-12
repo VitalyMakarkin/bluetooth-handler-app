@@ -58,6 +58,7 @@ class MainActivity : ComponentActivity() {
                     },
                     onListenClick = {
                         // TODO: Don't do that and must be refactor
+                        // bleHandler.listen(address, serviceUuid, characteristicUuid)
                     }
                 )
             }
